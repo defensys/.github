@@ -1,0 +1,42 @@
+---
+name: Linters
+
+on:
+  push:
+    branches:
+      - main
+  pull_request:
+    branches:
+      - main
+
+env:
+  CI: "true"
+
+jobs:
+  lint:
+    runs-on: ubuntu-latest
+    name: Run linters
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Lint Markdown via markdownlint
+        uses: nosborn/github-action-markdown-cli@v3.3.0
+        with:
+          files: .
+          config_file: .markdownlint.yaml
+
+      - name: Lint YAML via yamllint
+        uses: ibiqlik/action-yamllint@v3
+        with:
+          strict: true
+          config_file: ./.yamllint.yaml
+
+      - name: Lint shell scripts via Shellcheck
+        uses: ludeeus/action-shellcheck@2.0.0
+
+      - name: Lint code formatting via Prettier
+        id: prettier-run
+        uses: rutajdash/prettier-cli-action@v1.0.2
+        with:
+          config_path: .prettierrc.yaml
